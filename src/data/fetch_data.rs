@@ -3,7 +3,7 @@ use yahoo_finance_api as yahoo;
 use chrono::NaiveDate;
 use crate::data::yahoo_periods::{Interval, Range};
 
-pub async fn fetch_quotes_range(
+pub async fn fetch_close_prices_range(
     provider: &yahoo::YahooConnector,
     symbols: &[&str], interval: Interval, range: Range
 ) -> Result<Vec<Vec<f32>>> {
