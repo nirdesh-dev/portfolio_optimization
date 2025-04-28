@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use anyhow::Result;
 use yahoo_finance_api as yahoo;
 use chrono::NaiveDate;
@@ -6,7 +7,7 @@ use crate::data::yahoo_periods::{Interval, Range};
 pub async fn fetch_close_prices_range(
     provider: &yahoo::YahooConnector,
     symbols: &[&str], interval: Interval, range: Range
-) -> Result<Vec<Vec<f32>>> {
+) -> Result<Vec<HashMap<String, Vec<f32>>>> {
 
     let mut close_prices = Vec::new();
     for &symbol in symbols {
@@ -19,7 +20,9 @@ pub async fn fetch_close_prices_range(
             .into_iter()
             .map(|quote| quote.close as f32)
             .collect();
-        close_prices.push(quotes_close_prices);
+        let mut price_map = HashMap::new();
+        price_map.insert(symbol.to_string(), quotes_close_prices);
+        close_prices.push(price_map);
     }
     Ok(close_prices)
 }
