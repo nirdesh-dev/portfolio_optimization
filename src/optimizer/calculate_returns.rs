@@ -16,3 +16,16 @@ Result<HashMap<String, Vec<f32>>> {
     }
     Ok(result)
 }
+
+pub fn calculate_expected_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) ->
+Result<HashMap<String, f32>> {
+    let mut result = HashMap::new();
+
+    for price_map in price_maps {
+        for (symbol, prices) in price_map {
+            let exp_returns: f32 = prices.iter().sum::<f32>() / prices.len() as f32;
+            result.insert(symbol, exp_returns);
+        }
+    }
+    Ok(result)
+}
