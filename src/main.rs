@@ -14,6 +14,7 @@ async fn main() -> Result<()> {
     let symbols = vec!["AAPL", "MSFT", "GOOG"];
     let prices =
         fetch_close_prices_range(&provider, &symbols, Interval::Day1, Range::Month1).await?;
+    println!("{:?}", prices);
     // let returns = calculate_simple_returns(prices);
     // let returns = calculate_expected_returns(prices);
     // println!("{:?}", returns);
