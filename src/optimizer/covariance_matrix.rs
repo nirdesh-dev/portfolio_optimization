@@ -1,8 +1,9 @@
 use anyhow::{Context, Result};
-use ndarray::{Array2, Array1, Axis};
+use ndarray::{Array1, Array2, Axis};
 use ndarray_stats::CorrelationExt;
 use std::collections::HashMap;
 use thiserror::Error;
+use crate::optimizer::calculate_returns::calculate_simple_returns;
 
 #[derive(Error, Debug)]
 pub enum CovarianceError {
@@ -12,13 +13,14 @@ pub enum CovarianceError {
     UnevenSampleLength,
 }
 
-pub fn extract_price_vectors(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Array2<f32>> {
+pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Array2<f32>> {
+    // First, compute returns for all price series
+    let returns_map = calculate_simple_returns(price_maps)?;
     let mut arrays: Vec<Array1<f32>> = Vec::new();
 
-    for map in price_maps {
-        for (_key, vec) in map {
-            arrays.push(Array1::from(&vec[..]));
-        }
+    // Extract returns vectors and convert to Array1
+    for (_symbol, returns) in returns_map {
+        arrays.push(Array1::from(returns));
     }
 
     // Must have at least two vectors to compute covariance/correlation
@@ -33,16 +35,20 @@ pub fn extract_price_vectors(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Resu
             .context("Each sample (row) must have the same length");
     }
     // Stack rows to form a 2D array
-    let array = ndarray::stack(Axis(0), &arrays).context("Failed to stack vectors into Array2")?;
+    let stacked = ndarray::stack(
+        Axis(0),
+        &arrays.iter().map(|a| a.view()).collect::<Vec<_>>(),
+    )
+        .context("Failed to stack vectors into Array2")?;
 
-    Ok(array)
+    Ok(stacked)
 }
 
 // calculate covariance matrix for row-oriented data (each row is a variable)
 pub fn calculate_covariance_matrix(
     price_maps: Vec<HashMap<String, Vec<f32>>>,
 ) -> Result<Array2<f32>> {
-    let price_array_2d = extract_price_vectors(price_maps).unwrap();
+    let price_array_2d = extract_returns(price_maps).unwrap();
     let covariance_matrix = price_array_2d.cov(1.).unwrap();
     Ok(covariance_matrix)
 }
