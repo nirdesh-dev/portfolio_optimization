@@ -1,9 +1,9 @@
+use crate::optimizer::calculate_returns::calculate_simple_returns;
 use anyhow::{Context, Result};
 use ndarray::{Array1, Array2, Axis};
 use ndarray_stats::CorrelationExt;
 use std::collections::HashMap;
 use thiserror::Error;
-use crate::optimizer::calculate_returns::calculate_simple_returns;
 
 #[derive(Error, Debug)]
 pub enum CovarianceError {
@@ -39,7 +39,7 @@ pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Arr
         Axis(0),
         &arrays.iter().map(|a| a.view()).collect::<Vec<_>>(),
     )
-        .context("Failed to stack vectors into Array2")?;
+    .context("Failed to stack vectors into Array2")?;
 
     Ok(stacked)
 }
