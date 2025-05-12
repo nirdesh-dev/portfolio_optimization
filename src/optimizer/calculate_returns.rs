@@ -21,6 +21,7 @@ pub fn calculate_simple_returns(
     Ok(result)
 }
 
+#[allow(dead_code)]
 pub fn calculate_expected_returns(
     price_maps: Vec<HashMap<String, Vec<f32>>>,
 ) -> Result<HashMap<String, f32>> {

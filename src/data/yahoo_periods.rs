@@ -1,4 +1,5 @@
 use thiserror::Error;
+
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Range {
@@ -14,6 +15,7 @@ pub enum Range {
     Max,
 }
 
+#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Interval {
     Minute1,
@@ -31,6 +33,7 @@ pub enum Interval {
     Month3,
 }
 
+#[allow(dead_code)]
 #[derive(Error, Debug, PartialEq)]
 pub enum PeriodError {
     #[error("Invalid interval for this range")]
@@ -41,6 +44,7 @@ pub enum PeriodError {
     UnknownInterval(String),
 }
 
+#[allow(dead_code)]
 impl Range {
     pub fn as_str(&self) -> &'static str {
         match self {
@@ -119,6 +123,7 @@ impl Range {
     }
 }
 
+#[allow(dead_code)]
 impl Interval {
     pub fn as_str(&self) -> &'static str {
         match self {
