@@ -8,6 +8,8 @@ yahoo_finance_api = "3.0.0"
 anyhow = "1.0.97"
 cudarc = { version = "0.13.9", features = ["cuda-12080"] }
 ndarray = "0.16.1"
+ndarray-stats = "0.6.0"
 tokio = { version = "1.44.1", features = ["full"] }
 thiserror = "2.0.12"
 chrono = "0.4.40"
+
