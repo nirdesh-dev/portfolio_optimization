@@ -1,6 +1,5 @@
 use crate::data::yahoo_periods::{Interval, Range};
 use anyhow::Result;
-use chrono::NaiveDate;
 use std::collections::HashMap;
 use yahoo_finance_api as yahoo;
 
