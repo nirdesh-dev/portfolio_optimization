@@ -1,5 +1,5 @@
 use ndarray::{Array1, Array2};
-use ndarray_linalg::{Inverse};
+use ndarray_linalg::Inverse;
 
 pub fn calcalate_mvp(cov_matrix: &Array2<f32>) -> Array1<f32> {
     let inv_cov = cov_matrix.inv().unwrap();

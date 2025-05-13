@@ -3,7 +3,7 @@ mod optimizer;
 
 use crate::data::fetch_data::fetch_close_prices_range;
 use crate::data::yahoo_periods::{Interval, Range};
-use crate::optimizer::covariance_matrix::{calculate_covariance_matrix};
+use crate::optimizer::covariance_matrix::calculate_covariance_matrix;
 use crate::optimizer::minimum_variance_portfolio::calcalate_mvp;
 use anyhow::Result;
 use yahoo_finance_api as yahoo;
