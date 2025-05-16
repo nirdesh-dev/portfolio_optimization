@@ -64,10 +64,10 @@ pub fn calculate_covariance_matrix(
     price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<Array2<f32>> {
     let price_array_2d = extract_returns(price_maps)
-        .context("Failed to extract returns for covariance calculation")?;;
+        .context("Failed to extract returns for covariance calculation")?;
 
     let covariance_matrix = price_array_2d.cov(1.)
         .context("Failed to calculate covariance matrix")?;
-    
+
     Ok(covariance_matrix)
 }
