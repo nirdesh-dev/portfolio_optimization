@@ -1,4 +1,4 @@
-use anyhow::Result;
+use anyhow::{Result, Context};
 use std::collections::HashMap;
 
 /// Calculates simple returns from a sequence of prices
@@ -22,9 +22,11 @@ pub fn calculate_simple_returns(
                 .windows(2)
                 .map(|window| (window[1] - window[0]) / window[0])
                 .collect();
+
             result.insert(symbol.clone(), returns);
         }
     }
+
     Ok(result)
 }
 
@@ -36,14 +38,18 @@ pub fn calculate_simple_returns(
 /// # Returns
 /// * A HashMap mapping symbols to their expected returns
 #[allow(dead_code)]
-pub fn calculate_expected_returns(
+pub fn calculate_average_returns(
     price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<HashMap<String, f32>> {
     let mut result = HashMap::new();
-    let pct_daily_returns = calculate_simple_returns(price_maps).unwrap();
+
+    let pct_daily_returns = calculate_simple_returns(price_maps).context("Failed to calculate \
+    simple returns")?;
+
     for (symbol, prices) in pct_daily_returns {
         let exp_returns: f32 = prices.iter().sum::<f32>() / prices.len() as f32;
         result.insert(symbol, exp_returns);
     }
+
     Ok(result)
 }
