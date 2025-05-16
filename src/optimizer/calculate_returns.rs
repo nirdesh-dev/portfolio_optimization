@@ -1,4 +1,4 @@
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use std::collections::HashMap;
 
 /// Calculates simple returns from a sequence of prices
@@ -43,8 +43,10 @@ pub fn calculate_average_returns(
 ) -> Result<HashMap<String, f32>> {
     let mut result = HashMap::new();
 
-    let pct_daily_returns = calculate_simple_returns(price_maps).context("Failed to calculate \
-    simple returns")?;
+    let pct_daily_returns = calculate_simple_returns(price_maps).context(
+        "Failed to calculate \
+    simple returns",
+    )?;
 
     for (symbol, prices) in pct_daily_returns {
         let exp_returns: f32 = prices.iter().sum::<f32>() / prices.len() as f32;

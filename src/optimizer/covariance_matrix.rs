@@ -22,7 +22,8 @@ pub enum CovarianceError {
 /// * A 2D array where each row represents returns for one symbol
 pub fn extract_returns(price_maps: &[HashMap<String, Vec<f32>>]) -> Result<Array2<f32>> {
     // First, compute returns for all price series
-    let returns_map = calculate_simple_returns(&price_maps)?;
+    let returns_map = calculate_simple_returns(price_maps).context("Failed to calculate simple \
+    returns")?;
 
     // Pre-allocate with capacity to avoid reallocations
     let mut arrays = Vec::with_capacity(returns_map.len());
@@ -66,7 +67,8 @@ pub fn calculate_covariance_matrix(
     let price_array_2d = extract_returns(price_maps)
         .context("Failed to extract returns for covariance calculation")?;
 
-    let covariance_matrix = price_array_2d.cov(1.)
+    let covariance_matrix = price_array_2d
+        .cov(1.)
         .context("Failed to calculate covariance matrix")?;
 
     Ok(covariance_matrix)
