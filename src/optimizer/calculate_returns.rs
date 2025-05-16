@@ -1,6 +1,13 @@
 use anyhow::Result;
 use std::collections::HashMap;
 
+/// Calculates simple returns from a sequence of prices
+///
+/// # Arguments
+/// * `price_maps` - Vector of price maps, where each map links symbols to their price sequences
+///
+/// # Returns
+/// * A HashMap mapping symbols to their corresponding return sequences
 pub fn calculate_simple_returns(
     price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<HashMap<String, Vec<f32>>> {
@@ -21,6 +28,13 @@ pub fn calculate_simple_returns(
     Ok(result)
 }
 
+/// Calculates expected (average) returns from price data
+///
+/// # Arguments
+/// * `price_maps` - Vector of price maps, where each map links symbols to their price sequences
+///
+/// # Returns
+/// * A HashMap mapping symbols to their expected returns
 #[allow(dead_code)]
 pub fn calculate_expected_returns(
     price_maps: &[HashMap<String, Vec<f32>>],
