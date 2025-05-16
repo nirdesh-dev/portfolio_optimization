@@ -14,3 +14,4 @@ thiserror = "2.0.12"
 chrono = "0.4.40"
 ndarray-linalg = { version = "0.17.0", features = ["openblas-system"] }
 good_lp = "1.12.0"
+clarabel = "0.10.0"
