@@ -1,5 +1,5 @@
 use clarabel::algebra::CscMatrix;
-use clarabel::solver::{DefaultSolver, DefaultSettings, NonnegativeConeT, ZeroConeT, IPSolver};
+use clarabel::solver::{DefaultSettings, DefaultSolver, IPSolver, NonnegativeConeT, ZeroConeT};
 use ndarray::{Array1, Array2};
 
 pub fn optimize_portfolio(
