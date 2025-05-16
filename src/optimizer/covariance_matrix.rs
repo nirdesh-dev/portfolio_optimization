@@ -15,7 +15,7 @@ pub enum CovarianceError {
 
 pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Array2<f32>> {
     // First, compute returns for all price series
-    let returns_map = calculate_simple_returns(price_maps)?;
+    let returns_map = calculate_simple_returns(&price_maps)?;
     let mut arrays: Vec<Array1<f32>> = Vec::new();
 
     // Extract returns vectors and convert to Array1
@@ -39,7 +39,7 @@ pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Arr
         Axis(0),
         &arrays.iter().map(|a| a.view()).collect::<Vec<_>>(),
     )
-    .context("Failed to stack vectors into Array2")?;
+        .context("Failed to stack vectors into Array2")?;
 
     Ok(stacked)
 }
