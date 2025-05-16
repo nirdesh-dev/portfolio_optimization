@@ -13,10 +13,19 @@ pub enum CovarianceError {
     UnevenSampleLength,
 }
 
-pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Array2<f32>> {
+/// Extracts return data from price maps into a 2D array
+///
+/// # Arguments
+/// * `price_maps` - A slice of price maps to extract returns from
+///
+/// # Returns
+/// * A 2D array where each row represents returns for one symbol
+pub fn extract_returns(price_maps: &[HashMap<String, Vec<f32>>]) -> Result<Array2<f32>> {
     // First, compute returns for all price series
     let returns_map = calculate_simple_returns(&price_maps)?;
-    let mut arrays: Vec<Array1<f32>> = Vec::new();
+
+    // Pre-allocate with capacity to avoid reallocations
+    let mut arrays = Vec::with_capacity(returns_map.len());
 
     // Extract returns vectors and convert to Array1
     for (_symbol, returns) in returns_map {
@@ -44,11 +53,21 @@ pub fn extract_returns(price_maps: Vec<HashMap<String, Vec<f32>>>) -> Result<Arr
     Ok(stacked)
 }
 
-// calculate covariance matrix for row-oriented data (each row is a variable)
+/// Calculates the covariance matrix from price data
+///
+/// # Arguments
+/// * `price_maps` - A slice of price maps to calculate covariance from
+///
+/// # Returns
+/// * A square covariance matrix
 pub fn calculate_covariance_matrix(
-    price_maps: Vec<HashMap<String, Vec<f32>>>,
+    price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<Array2<f32>> {
-    let price_array_2d = extract_returns(price_maps).unwrap();
-    let covariance_matrix = price_array_2d.cov(1.).unwrap();
+    let price_array_2d = extract_returns(price_maps)
+        .context("Failed to extract returns for covariance calculation")?;;
+
+    let covariance_matrix = price_array_2d.cov(1.)
+        .context("Failed to calculate covariance matrix")?;
+    
     Ok(covariance_matrix)
 }
