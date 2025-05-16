@@ -2,7 +2,7 @@ use anyhow::Result;
 use std::collections::HashMap;
 
 pub fn calculate_simple_returns(
-    price_maps: Vec<HashMap<String, Vec<f32>>>,
+    price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<HashMap<String, Vec<f32>>> {
     let mut result = HashMap::new();
 
@@ -15,7 +15,7 @@ pub fn calculate_simple_returns(
                 .windows(2)
                 .map(|window| (window[1] - window[0]) / window[0])
                 .collect();
-            result.insert(symbol, returns);
+            result.insert(symbol.clone(), returns);
         }
     }
     Ok(result)
@@ -23,7 +23,7 @@ pub fn calculate_simple_returns(
 
 #[allow(dead_code)]
 pub fn calculate_expected_returns(
-    price_maps: Vec<HashMap<String, Vec<f32>>>,
+    price_maps: &[HashMap<String, Vec<f32>>],
 ) -> Result<HashMap<String, f32>> {
     let mut result = HashMap::new();
     let pct_daily_returns = calculate_simple_returns(price_maps).unwrap();
