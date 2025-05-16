@@ -1,5 +1,4 @@
 use crate::optimizer::optimize_portfolio::optimize_portfolio;
-use good_lp::{coin_cbc, variables, Constraint, Expression, SolverModel};
 use ndarray::{Array1, Array2};
 
 pub fn calculate_efficient_frontier(

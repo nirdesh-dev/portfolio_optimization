@@ -7,7 +7,6 @@ use crate::optimizer::calculate_returns::{calculate_expected_returns, calculate_
 use crate::optimizer::covariance_matrix::calculate_covariance_matrix;
 use crate::optimizer::efficient_frontier::calculate_efficient_frontier;
 use crate::optimizer::minimum_variance_portfolio::calcalate_mvp;
-use crate::optimizer::optimize_portfolio::optimize_portfolio;
 use anyhow::Result;
 use ndarray::Array1;
 use yahoo_finance_api as yahoo;
@@ -22,13 +21,13 @@ async fn main() -> Result<()> {
         fetch_close_prices_range(&provider, &symbols, Interval::Day1, Range::Month1).await?;
     println!("{:?}", prices);
 
-    let daily_returns = calculate_simple_returns(prices.clone()).unwrap();
+    // let daily_returns = calculate_simple_returns(prices.clone()).unwrap();
     let mean_daily_returns = calculate_expected_returns(prices.clone()).unwrap();
     println!("{:?}", mean_daily_returns);
 
     let expected_returns = {
         let mut price_array = Vec::new();
-        for (symbol, price) in mean_daily_returns {
+        for (_symbol, price) in mean_daily_returns {
             price_array.push(price);
         }
         Array1::from_vec(price_array)

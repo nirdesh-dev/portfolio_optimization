@@ -26,12 +26,10 @@ pub fn calculate_expected_returns(
     price_maps: Vec<HashMap<String, Vec<f32>>>,
 ) -> Result<HashMap<String, f32>> {
     let mut result = HashMap::new();
-    let pct_daily_returns = calculate_simple_returns(price_maps);
-    for daily_return in pct_daily_returns {
-        for (symbol, prices) in daily_return {
-            let exp_returns: f32 = prices.iter().sum::<f32>() / prices.len() as f32;
-            result.insert(symbol, exp_returns);
-        }
+    let pct_daily_returns = calculate_simple_returns(price_maps).unwrap();
+    for (symbol, prices) in pct_daily_returns {
+        let exp_returns: f32 = prices.iter().sum::<f32>() / prices.len() as f32;
+        result.insert(symbol, exp_returns);
     }
     Ok(result)
 }

@@ -10,7 +10,7 @@ pub fn optimize_portfolio(
     let n = expected_returns.len();
 
     // 1. Objective: Minimize (1/2)w'Σw
-    let P = {
+    let p = {
         let mut rows = Vec::new();
         let mut cols = Vec::new();
         let mut values = Vec::new();
@@ -75,7 +75,7 @@ pub fn optimize_portfolio(
     let settings = DefaultSettings::default();
 
     // 5. Solve the problem
-    let mut solver = DefaultSolver::new(&P, &q, &a, &b, &cones, settings);
+    let mut solver = DefaultSolver::new(&p, &q, &a, &b, &cones, settings);
     solver.solve();
 
     // 6. Extract solution
