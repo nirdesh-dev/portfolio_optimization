@@ -1,15 +1,16 @@
 mod data;
 mod optimizer;
+mod helpers;
 
 use crate::data::fetch_data::fetch_close_prices_range;
 use crate::data::yahoo_periods::{Interval, Range};
 use crate::optimizer::calculate_returns::calculate_average_returns;
-use crate::optimizer::covariance_matrix::calculate_covariance_matrix;
-use crate::optimizer::efficient_frontier::calculate_efficient_frontier;
-use crate::optimizer::minimum_variance_portfolio::calcalate_mvp;
 use anyhow::{Context, Result};
 use ndarray::Array1;
+use tokio::time::Instant;
 use yahoo_finance_api as yahoo;
+use crate::helpers::covariance_matrix::calculate_covariance_matrix::calculate_covariance_matrix;
+use crate::optimizer::engine::Engine;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -40,22 +41,31 @@ async fn main() -> Result<()> {
         Array1::from_vec(price_array)
     };
 
-    let cov_matrix = calculate_covariance_matrix(&prices)?;
-    println!("{:?}", cov_matrix);
+    let start = Instant::now();
+    let cov_matrix_cpu = calculate_covariance_matrix(&prices, Engine::CPU)?;
+    let cpu_time = start.elapsed();
+    println!("Covariance Matrix From CPU: {:?}", cov_matrix_cpu);
+    println!("CPU Time: {:?}", cpu_time);
 
-    let mvp_weights = calcalate_mvp(&cov_matrix);
-    println!("{:?}", mvp_weights);
+    let start = Instant::now();
+    let cov_matrix_gpu = calculate_covariance_matrix(&prices, Engine::CUDA)?;
+    let gpu_time = start.elapsed();
+    println!("Covariance Matrix From GPU: {:?}", cov_matrix_gpu);
+    println!("GPU Time: {:?}", gpu_time);
 
-    let frontier = calculate_efficient_frontier(&expected_returns, &cov_matrix, 10);
-    // Print results
-    for (ret, var, weights) in frontier {
-        println!(
-            "Return: {:.4}, Risk: {:.4}, Weights: {:?}",
-            ret,
-            var.sqrt(),
-            weights
-        );
-    }
+    // let mvp_weights = calcalate_mvp(&cov_matrix);
+    // println!("{:?}", mvp_weights);
+    //
+    // let frontier = calculate_efficient_frontier(&expected_returns, &cov_matrix, 10);
+    // // Print results
+    // for (ret, var, weights) in frontier {
+    //     println!(
+    //         "Return: {:.4}, Risk: {:.4}, Weights: {:?}",
+    //         ret,
+    //         var.sqrt(),
+    //         weights
+    //     );
+    // }
 
     Ok(())
 }
