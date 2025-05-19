@@ -1,4 +1,4 @@
 pub enum Engine {
-    CPU,
-    CUDA,
+    Cpu,
+    Cuda,
 }

@@ -1,5 +1,5 @@
 use anyhow::{Context, Result};
-use ndarray::{Array2};
+use ndarray::Array2;
 use ndarray_stats::CorrelationExt;
 
 /// Calculates the covariance matrix from price data
@@ -9,9 +9,7 @@ use ndarray_stats::CorrelationExt;
 ///
 /// # Returns
 /// * A square covariance matrix
-pub fn calculate_covariance_matrix_cpu(
-    price_array: Array2<f32>,
-) -> Result<Array2<f32>> {
+pub fn calculate_covariance_matrix_cpu(price_array: Array2<f32>) -> Result<Array2<f32>> {
     let covariance_matrix = price_array
         .cov(1.)
         .context("Failed to calculate covariance matrix")?;

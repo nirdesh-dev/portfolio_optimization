@@ -1,10 +1,10 @@
-use std::collections::HashMap;
-use anyhow::Context;
-use ndarray::{Array1, Axis};
 use crate::helpers::covariance_matrix::errors::CovarianceError;
 use crate::helpers::covariance_matrix::models::PriceData;
 use crate::optimizer::calculate_returns::calculate_simple_returns;
 use crate::optimizer::engine::Engine;
+use anyhow::Context;
+use ndarray::{Array1, Axis};
+use std::collections::HashMap;
 
 /// Extracts return data from price maps into a 2D array
 ///
@@ -13,8 +13,10 @@ use crate::optimizer::engine::Engine;
 ///
 /// # Returns
 /// * A 2D array where each row represents returns for one symbol
-pub fn extract_returns(price_maps: &[HashMap<String, Vec<f32>>], engine: &Engine) ->
-anyhow::Result<PriceData> {
+pub fn extract_returns(
+    price_maps: &[HashMap<String, Vec<f32>>],
+    engine: &Engine,
+) -> anyhow::Result<PriceData> {
     // First, compute returns for all price series
     let returns_map =
         calculate_simple_returns(price_maps).context("Failed to calculate simple returns")?;
@@ -40,17 +42,17 @@ anyhow::Result<PriceData> {
     }
 
     match engine {
-        Engine::CPU => {
+        Engine::Cpu => {
             // Stack rows to form a 2D array for CPU processing
             let stacked = ndarray::stack(
                 Axis(0),
                 &arrays.iter().map(|a| a.view()).collect::<Vec<_>>(),
             )
-                .context("Failed to stack vectors into Array2")?;
+            .context("Failed to stack vectors into Array2")?;
 
             Ok(PriceData::Matrix(stacked))
         }
-        Engine::CUDA => {
+        Engine::Cuda => {
             // Create flattened array for GPU processing
             let n_assets = arrays.len();
             let n_samples = expected_len;

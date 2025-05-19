@@ -1,16 +1,15 @@
 mod data;
-mod optimizer;
 mod helpers;
+mod optimizer;
 
 use crate::data::fetch_data::fetch_close_prices_range;
 use crate::data::yahoo_periods::{Interval, Range};
+use crate::helpers::covariance_matrix::calculate_covariance_matrix::calculate_covariance_matrix;
 use crate::optimizer::calculate_returns::calculate_average_returns;
+use crate::optimizer::engine::Engine;
 use anyhow::{Context, Result};
-use ndarray::Array1;
 use tokio::time::Instant;
 use yahoo_finance_api as yahoo;
-use crate::helpers::covariance_matrix::calculate_covariance_matrix::calculate_covariance_matrix;
-use crate::optimizer::engine::Engine;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -30,25 +29,25 @@ async fn main() -> Result<()> {
     println!("{:?}", mean_daily_returns);
 
     // Convert returns to ndarray for optimization
-    let expected_returns = {
-        let mut price_array = Vec::with_capacity(mean_daily_returns.len());
-
-        for (symbol, price) in &mean_daily_returns {
-            println!("{}: {:.4}%", symbol, price * 100.0);
-            price_array.push(*price);
-        }
-
-        Array1::from_vec(price_array)
-    };
+    // let expected_returns = {
+    //     let mut price_array = Vec::with_capacity(mean_daily_returns.len());
+    //
+    //     for (symbol, price) in &mean_daily_returns {
+    //         println!("{}: {:.4}%", symbol, price * 100.0);
+    //         price_array.push(*price);
+    //     }
+    //
+    //     Array1::from_vec(price_array)
+    // };
 
     let start = Instant::now();
-    let cov_matrix_cpu = calculate_covariance_matrix(&prices, Engine::CPU)?;
+    let cov_matrix_cpu = calculate_covariance_matrix(&prices, Engine::Cpu)?;
     let cpu_time = start.elapsed();
     println!("Covariance Matrix From CPU: {:?}", cov_matrix_cpu);
     println!("CPU Time: {:?}", cpu_time);
 
     let start = Instant::now();
-    let cov_matrix_gpu = calculate_covariance_matrix(&prices, Engine::CUDA)?;
+    let cov_matrix_gpu = calculate_covariance_matrix(&prices, Engine::Cuda)?;
     let gpu_time = start.elapsed();
     println!("Covariance Matrix From GPU: {:?}", cov_matrix_gpu);
     println!("GPU Time: {:?}", gpu_time);

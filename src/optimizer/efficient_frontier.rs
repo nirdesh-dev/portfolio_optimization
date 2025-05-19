@@ -1,6 +1,7 @@
 use crate::optimizer::optimize_portfolio::optimize_portfolio;
 use ndarray::{Array1, Array2};
 
+#[allow(unused)]
 pub fn calculate_efficient_frontier(
     expected_returns: &Array1<f32>,
     cov_matrix: &Array2<f32>,
