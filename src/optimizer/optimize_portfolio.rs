@@ -2,6 +2,7 @@ use clarabel::algebra::CscMatrix;
 use clarabel::solver::{DefaultSettings, DefaultSolver, IPSolver, NonnegativeConeT, ZeroConeT};
 use ndarray::{Array1, Array2};
 
+#[allow(unused)]
 pub fn optimize_portfolio(
     expected_returns: &Array1<f32>,
     cov_matrix: &Array2<f32>,
