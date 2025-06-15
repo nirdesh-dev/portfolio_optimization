@@ -1,8 +1,8 @@
-use std::time::Instant;
 use anyhow::{Context, Result};
 use cudarc::driver::{CudaDevice, LaunchAsync, LaunchConfig};
 use cudarc::nvrtc::compile_ptx;
 use ndarray::{Array1, Array2};
+use std::time::Instant;
 
 // CUDA kernel for calculating covariance matrix
 static COVARIANCE_KERNEL: &str = r#"
@@ -125,7 +125,8 @@ pub fn calculate_covariance_matrix_cuda(
     }
 
     // Wait for GPU to finish executing the kernel
-    dev.synchronize().context("Failed to synchronize CUDA device")?;
+    dev.synchronize()
+        .context("Failed to synchronize CUDA device")?;
 
     let gpu_time = start.elapsed();
     println!("Kernel execution time: {:?}", gpu_time);
@@ -134,7 +135,7 @@ pub fn calculate_covariance_matrix_cuda(
     let cov_matrix_flat = dev
         .dtoh_sync_copy(&d_cov_matrix)
         .context("Failed to copy covariance matrix from device")?;
-    
+
     // Reshape flat array into 2D array
     let cov_matrix = Array2::from_shape_vec((n_assets, n_assets), cov_matrix_flat)
         .context("Failed to reshape covariance matrix")?;

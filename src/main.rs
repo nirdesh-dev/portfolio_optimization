@@ -1,16 +1,16 @@
 mod data;
-mod optimizer;
 mod helpers;
+mod optimizer;
 
-use crate::optimizer::calculate_average_returns;
+use crate::data::fetch_data_polygon::fetch_polygon_data;
 use crate::helpers::calculate_covariance_matrix;
-use crate::optimizer::calculate_efficient_frontier;
 use crate::optimizer::calcalate_mvp;
+use crate::optimizer::calculate_average_returns;
+use crate::optimizer::calculate_efficient_frontier;
+use crate::optimizer::engine::Engine;
 use anyhow::{Context, Result};
 use ndarray::Array1;
 use yahoo_finance_api as yahoo;
-use crate::data::fetch_data_polygon::fetch_polygon_data;
-use crate::optimizer::engine::Engine;
 
 #[tokio::main]
 async fn main() -> Result<()> {

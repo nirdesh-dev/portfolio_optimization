@@ -1,9 +1,9 @@
+use anyhow::{Context, Result};
+use reqwest::Client;
+use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
-use anyhow::{Result, Context};
-use serde::Deserialize;
-use reqwest::Client;
 
 #[derive(Debug, Deserialize)]
 struct PolygonResult {
