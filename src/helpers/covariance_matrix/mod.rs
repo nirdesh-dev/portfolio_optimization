@@ -4,3 +4,5 @@ pub mod covariance_matrix_cuda;
 pub mod errors;
 pub mod extract_returns;
 pub mod models;
+
+pub use calculate_covariance_matrix::*;

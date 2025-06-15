@@ -1,31 +1,22 @@
 mod data;
 mod optimizer;
+mod helpers;
 
-use crate::data::fetch_data::fetch_close_prices_range;
-use crate::data::yahoo_periods::{Interval, Range};
-use crate::optimizer::calculate_returns::calculate_average_returns;
-use crate::optimizer::covariance_matrix::calculate_covariance_matrix;
-use crate::optimizer::efficient_frontier::calculate_efficient_frontier;
-use crate::optimizer::minimum_variance_portfolio::calcalate_mvp;
+use crate::optimizer::calculate_average_returns;
+use crate::helpers::calculate_covariance_matrix;
+use crate::optimizer::calculate_efficient_frontier;
+use crate::optimizer::calcalate_mvp;
 use anyhow::{Context, Result};
 use ndarray::Array1;
 use yahoo_finance_api as yahoo;
 use crate::data::fetch_data_polygon::fetch_polygon_data;
+use crate::optimizer::engine::Engine;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Initialize the Yahoo Finance API connector
-    let provider = yahoo::YahooConnector::new().context("Failed to create Yahoo connector")?;
-
     let symbols = vec!["AAPL", "MSFT", "GOOGL"];
 
     let prices = fetch_polygon_data(&symbols, "2023-06-02", "2025-06-02").await?;
-
-    // let prices = fetch_close_prices_range(&provider, &symbols, Interval::Day1, Range::Month1)
-    //     .await
-    //     .context("Failed to fetch price data")?;
-    //
-    // println!("{:?}", prices);
 
     let mean_daily_returns =
         calculate_average_returns(&prices).context("Failed to calculate expected returns")?;
@@ -43,7 +34,7 @@ async fn main() -> Result<()> {
         Array1::from_vec(price_array)
     };
 
-    let cov_matrix = calculate_covariance_matrix(&prices)?;
+    let cov_matrix = calculate_covariance_matrix(&prices, Engine::Cuda)?;
     println!("{:?}", cov_matrix);
     //
     let mvp_weights = calcalate_mvp(&cov_matrix);
@@ -51,14 +42,14 @@ async fn main() -> Result<()> {
 
     let frontier = calculate_efficient_frontier(&expected_returns, &cov_matrix, 10);
     // Print results
-    for (ret, var, weights) in frontier {
-        println!(
-            "Return: {:.4}, Risk: {:.4}, Weights: {:?}",
-            ret,
-            var.sqrt(),
-            weights
-        );
-    }
+    // for (ret, var, weights) in frontier {
+    //     println!(
+    //         "Return: {:.4}, Risk: {:.4}, Weights: {:?}",
+    //         ret,
+    //         var.sqrt(),
+    //         weights
+    //     );
+    // }
 
     Ok(())
 }
